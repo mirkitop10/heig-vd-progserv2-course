@@ -42,12 +42,15 @@ class Person {
         return $this->email;
     }
     public function setEmail(string $email): void {
-        $this->email = $email;
+        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->email = $email;
+        }
     }
 
     public function getFullName(): string {
 
         return $this->firstName . " " . $this->lastName;
+        "<br>";
     }
 
     public function isAdult(): bool {
