@@ -35,12 +35,12 @@ class Database implements DatabaseInterface {
         $stmt->execute();
 
         // Création de la table `users` si elle n'existe pas
-        $sql = "CREATE TABLE IF NOT EXISTS users (
+        $sql = "CREATE TABLE IF NOT EXISTS tools(
             id INT AUTO_INCREMENT PRIMARY KEY,
-            first_name VARCHAR(100) NOT NULL,
-            last_name VARCHAR(100) NOT NULL,
-            email VARCHAR(255) NOT NULL UNIQUE,
-            age INT NOT NULL
+            tool_name VARCHAR(100) NOT NULL UNIQUE,
+            type VARCHAR(100) NOT NULL,
+            purchase_date DATE NOT NULL ,
+            price FLOAT NOT NULL
         );";
 
         $stmt = $this->pdo->prepare($sql);

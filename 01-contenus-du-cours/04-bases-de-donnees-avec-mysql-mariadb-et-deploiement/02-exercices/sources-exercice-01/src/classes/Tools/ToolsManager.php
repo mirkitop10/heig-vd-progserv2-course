@@ -1,21 +1,21 @@
 <?php
 
-namespace Users;
+namespace Tools;
 
 require_once __DIR__ . '/../../utils/autoloader.php';
 
 use Database;
 
-class UsersManager implements UsersManagerInterface {
+class ToolsManager implements ToolsManagerInterface {
     private $database;
 
     public function __construct() {
         $this->database = new Database();
     }
 
-    public function getUsers(): array {
+    public function getTool(): array {
         // Définition de la requête SQL pour récupérer tous les utilisateurs
-        $sql = "SELECT * FROM users";
+        $sql = "SELECT * FROM tools";
 
         // Préparation de la requête SQL
         $stmt = $this->database->getPdo()->prepare($sql);
@@ -24,45 +24,45 @@ class UsersManager implements UsersManagerInterface {
         $stmt->execute();
 
         // Récupération de tous les utilisateurs
-        $users = $stmt->fetchAll();
+        $tools = $stmt->fetchAll();
 
         // Transformation des tableaux associatifs en objets User
-        $users = array_map(function ($userData) {
-            return new User(
-                $userData['id'],
-                $userData['first_name'],
-                $userData['last_name'],
-                $userData['email'],
-                $userData['age']
+        $tools = array_map(function ($toolData) {
+            return new Tool(
+                $toolData['id'],
+                $toolData['tool_name'],
+                $toolData['type'],
+                new \DateTime($toolData['purchase_date']),
+                $toolData['price']
             );
-        }, $users);
+        }, $tools);
 
         // Retour de tous les utilisateurs
-        return $users;
+        return $tools;
     }
 
-    public function addUser(User $user): int {
+    public function addTool(Tool $tools): int {
         // Définition de la requête SQL pour ajouter un utilisateur
-        $sql = "INSERT INTO users (
-            first_name,
-            last_name,
-            email,
-            age
+        $sql = "INSERT INTO tools (
+            tool_name,
+            type,
+            purchase_date,
+            price
         ) VALUES (
-            :first_name,
-            :last_name,
-            :email,
-            :age
+            :tool_name,
+            :type,
+            :purchase_date,
+            :price
         )";
 
         // Préparation de la requête SQL
         $stmt = $this->database->getPdo()->prepare($sql);
 
         // Lien avec les paramètres
-        $stmt->bindValue(':first_name', $user->getFirstName());
-        $stmt->bindValue(':last_name', $user->getLastName());
-        $stmt->bindValue(':email', $user->getEmail());
-        $stmt->bindValue(':age', $user->getAge());
+        $stmt->bindValue(':tool_name', $tools->getToolName());
+        $stmt->bindValue(':type', $tools->getType());
+        $stmt->bindValue(':purchase_date', $tools->getPurchaseDate()->format('Y-m-d'));
+        $stmt->bindValue(':price', $tools->getPrice());
 
         // Exécution de la requête SQL pour ajouter un utilisateur
         $stmt->execute();
@@ -74,9 +74,9 @@ class UsersManager implements UsersManagerInterface {
         return $userId;
     }
 
-    public function removeUser(int $id): bool {
+    public function removeTool(int $id): bool {
         // Définition de la requête SQL pour supprimer un utilisateur
-        $sql = "DELETE FROM users WHERE id = :id";
+        $sql = "DELETE FROM tools WHERE id = :id";
 
         // Préparation de la requête SQL
         $stmt = $this->database->getPdo()->prepare($sql);
